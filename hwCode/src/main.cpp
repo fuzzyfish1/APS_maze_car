@@ -26,6 +26,17 @@
  * Docs + links:
  * http://handsontec.com/dataspecs/L298N%20Motor%20Driver.pdf
  * https://www.st.com/resource/en/datasheet/l298.pdf
+ *
+ * The program needs a bit of tuning, the car overshoots in speed but going any lower will cause the car to not move
+ * the sensors think the floor is tape, and masking tape and paper look exactly the same in IR resulting in surfaces it runs on to matter a lot
+ * due to the positioning of the sensors, it would be significantly easier to have the car stay in between 2 lines (flip all the turnright() and turnleft())
+ *
+ * MAZE SOLN would look similar, follow the left edge/tape barrier
+ * build and populate a map datastructure and run through the whole thing, prebuild a map to run through
+ * we could explore Dijkstra, A*, random Mouse, left/right hand rules, deadend filling, negative potential field, Machine learning algorithms
+ * and have the kids decide and build their own algorithms with it
+ *
+ * adding encoders/an accelerometer would let me add PID control and odometry, which would make real maze solutions actually possible
 */
 
 
