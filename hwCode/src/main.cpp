@@ -56,11 +56,12 @@
 
 // PROGRAM CTRL SHI
 
-#define TAPE_FLOOR_THRESH 45 // 150 for paper value for when an analog signal is considered tape
+#define TAPE_FLOOR_THRESH 200 // 150 for paper value for when an analog signal is considered tape
 #define SPD 110 // PWM 0 - 255
 #define INTERVAL_OF_FUCKED 2000 // amount of time to be not seeing tape before robot decides to stop
 #define INTERVAL_OF_FUCKED_ABRUPT 5000
 // day 1 + day 2 code
+
 void forward() {
 	analogWrite(EN1_PIN, SPD);
 	analogWrite(EN2_PIN, SPD);
@@ -151,21 +152,22 @@ void loop() {
 
 	// print once a second, serial takes forever otherwise
 	// DEBUG STATEMENTS IF NEEDED
-	if (millis() - lastPrint > 1000) {
+
+	if (millis() - lastPrint > 100) {
 		lastPrint = millis();
-		Serial.print("left: ");
-		Serial.print(digitalRead(LFL_DIG_PIN));
-		Serial.print(" /Analog ");
+		// Serial.print("left: ");
+		// Serial.print(digitalRead(LFL_DIG_PIN));
+		Serial.print("LAnalog: ");
 		Serial.print(leftAnalog);
 
-		Serial.print("right: ");
-		Serial.print(digitalRead(LFR_DIG_PIN));
-		Serial.print(" /Analog ");
+		// Serial.print("right: ");
+		// Serial.print(digitalRead(LFR_DIG_PIN));
+		Serial.print(", RAnalog: ");
 		Serial.print(rightAnalog);
 
-		Serial.print(" seeRightTape: ");
+		Serial.print(", seeRightTape: ");
 		Serial.print(rightSeeTape);
-		Serial.print(" seeLeftTape: ");
+		Serial.print(", seeLeftTape: ");
 		Serial.println(leftSeeTape);
 	}
 
@@ -180,7 +182,6 @@ void loop() {
 	 * we compensate for this by persisting the last instruction for some amount of time
 	 * this way even when we don't see the line due to overshoot we can guess where it is
 	 */
-
 
 	static long lastRight = 0;
 	static long lastLeft = 0;
