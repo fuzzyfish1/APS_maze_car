@@ -57,7 +57,7 @@
 // PROGRAM CTRL SHI
 
 #define TAPE_FLOOR_THRESH 200 // 150 for paper value for when an analog signal is considered tape
-#define SPD 110 // PWM 0 - 255
+#define SPD 100 // PWM 0 - 255
 #define INTERVAL_OF_FUCKED 2000 // amount of time to be not seeing tape before robot decides to stop
 #define INTERVAL_OF_FUCKED_ABRUPT 5000
 // day 1 + day 2 code
@@ -70,10 +70,10 @@ void forward() {
 	digitalWrite(IN2, HIGH);
 	digitalWrite(IN3, HIGH);
 	digitalWrite(IN4, LOW);
+	// Serial.println("forward");
 }
 
 void turnRight() {
-
 	analogWrite(EN1_PIN, SPD);
 	analogWrite(EN2_PIN, SPD);
 
@@ -81,10 +81,10 @@ void turnRight() {
 	digitalWrite(IN2, LOW);
 	digitalWrite(IN3, HIGH);
 	digitalWrite(IN4, LOW);
+	// Serial.println("turnRight");
 }
 
 void turnLeft() {
-
 	analogWrite(EN1_PIN, SPD);
 	analogWrite(EN2_PIN, SPD);
 
@@ -93,15 +93,15 @@ void turnLeft() {
 	digitalWrite(IN3, LOW);
 	digitalWrite(IN4, LOW);
 
+	// Serial.println("turnLeft");
 }
 
 void stop() {
-
 	digitalWrite(IN1, LOW);
 	digitalWrite(IN2, LOW);
 	digitalWrite(IN3, LOW);
 	digitalWrite(IN4, LOW);
-
+	// Serial.println("stop");
 }
 
 void stopMotors() {
@@ -189,6 +189,7 @@ void loop() {
 
 	if (!leftSeeTape && !rightSeeTape) {
 
+		forward();
 		/**UNIT3 : Persistance with a reset*/
 
 		// if the last instruction was to turn right (it passed over the left edge but overshot), let it persist for INTERVAL_OF_FUCKED ms
@@ -197,12 +198,13 @@ void loop() {
 
 		} else if (lastLeft > lastForward && lastLeft > lastRight && millis() - lastLeft < INTERVAL_OF_FUCKED) {
 			turnLeft();
-
-		// if the line just ends abruptly ... turn right to hopefully find the line again, also give it more time to figure this out
-		} else if (millis() - lastForward < INTERVAL_OF_FUCKED_ABRUPT) {
-			turnRight();
-
-		// we fucked and can't see anything for a while just give up, ... loop will restart it after 2s in tape/flipped over
+		//
+		// // if the line just ends abruptly ... turn right to hopefully find the line again, also give it more time to figure this out
+		// // go straight if the tape is smaller than
+		// } else if (millis() - lastForward < INTERVAL_OF_FUCKED_ABRUPT) {
+		// 	forward();
+		//
+		// // we fucked and can't see anything for a while just give up, ... loop will restart it after 2s in tape/flipped over
 		} else {
 			stop();
 			// the delay allows some random amt of time before it goes off into the world
@@ -215,11 +217,11 @@ void loop() {
 		forward();
 		lastForward = millis();
 
-	} else if (leftSeeTape && !rightSeeTape) {
+	} else if (!leftSeeTape && rightSeeTape) {
 		turnRight();
 		lastRight = millis();
 
-	} else if (!leftSeeTape && rightSeeTape) {
+	} else if (leftSeeTape && !rightSeeTape) {
 		turnLeft();
 		lastLeft = millis();
 	}
