@@ -58,8 +58,8 @@
 
 #define TAPE_FLOOR_THRESH 200 // 150 for paper value for when an analog signal is considered tape
 #define SPD 100 // PWM 0 - 255
-#define INTERVAL_OF_FUCKED 2000 // amount of time to be not seeing tape before robot decides to stop
-#define INTERVAL_OF_FUCKED_ABRUPT 5000
+#define INTERVAL_OF_STOP 2000 // amount of time to be not seeing tape before robot decides to stop
+#define INTERVAL_OF_STOP_ABRUPT 5000
 // day 1 + day 2 code
 
 void forward() {
@@ -97,6 +97,9 @@ void turnLeft() {
 }
 
 void stop() {
+	analogWrite(EN1_PIN, 0);
+	analogWrite(EN2_PIN, 0);
+
 	digitalWrite(IN1, LOW);
 	digitalWrite(IN2, LOW);
 	digitalWrite(IN3, LOW);
@@ -105,8 +108,7 @@ void stop() {
 }
 
 void stopMotors() {
-	analogWrite(EN1_PIN, 0);
-	analogWrite(EN2_PIN, 0);
+
 }
 
 void setup() {
@@ -192,19 +194,19 @@ void loop() {
 		forward();
 		/**UNIT3 : Persistance with a reset*/
 
-		// if the last instruction was to turn right (it passed over the left edge but overshot), let it persist for INTERVAL_OF_FUCKED ms
-		if ( lastRight > lastForward && lastRight > lastLeft && millis() - lastRight < INTERVAL_OF_FUCKED) {
+		// if the last instruction was to turn right (it passed over the left edge but overshot), let it persist for INTERVAL_OF_STOPED ms
+		if ( lastRight > lastForward && lastRight > lastLeft && millis() - lastRight < INTERVAL_OF_STOP) {
 			turnRight();
 
-		} else if (lastLeft > lastForward && lastLeft > lastRight && millis() - lastLeft < INTERVAL_OF_FUCKED) {
+		} else if (lastLeft > lastForward && lastLeft > lastRight && millis() - lastLeft < INTERVAL_OF_STOP) {
 			turnLeft();
-		//
-		// // if the line just ends abruptly ... turn right to hopefully find the line again, also give it more time to figure this out
-		// // go straight if the tape is smaller than
-		// } else if (millis() - lastForward < INTERVAL_OF_FUCKED_ABRUPT) {
-		// 	forward();
-		//
-		// // we fucked and can't see anything for a while just give up, ... loop will restart it after 2s in tape/flipped over
+
+		// if the line just ends abruptly ... turn right to hopefully find the line again, also give it more time to figure this out
+		// go straight if the tape is smaller than
+		} else if (millis() - lastForward < INTERVAL_OF_STOP_ABRUPT) {
+			forward();
+
+		// we stuck and can't see anything for a while just give up, ... loop will restart it after 2s in tape/flipped over
 		} else {
 			stop();
 			// the delay allows some random amt of time before it goes off into the world
