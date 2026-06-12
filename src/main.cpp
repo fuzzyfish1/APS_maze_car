@@ -22,10 +22,6 @@
 #define EN1_PIN 9
 #define EN2_PIN 10
 
-// MPU 6050 sensor wiring
-#define ACL_SDA_PIN A5
-#define ACL_SCL_PIN A4
-
 /**
  * System -
  *   OS:  [Linux Mint 22.1 x86 Cinnamon]
@@ -41,14 +37,12 @@
  *
 */
 
-// PROGRAM CTRL SHI
-
-#define TAPE_FLOOR_THRESH 200 // 150 for paper value for when an analog signal is considered tape
+#define TAPE_FLOOR_THRESH 0 // fill in this number
 #define SPD 100 // PWM 0 - 255
 #define INTERVAL_OF_STOP 2000 // amount of time to be not seeing tape before robot decides to stop
 #define INTERVAL_OF_STOP_ABRUPT 5000
-// day 1 + day 2 code
 
+// an example, do this for turnRight, and turnLeft
 void forward() {
 	analogWrite(EN1_PIN, SPD);
 	analogWrite(EN2_PIN, SPD);
@@ -64,25 +58,19 @@ void turnRight() {
 	analogWrite(EN1_PIN, SPD);
 	analogWrite(EN2_PIN, SPD);
 
-	digitalWrite(IN1, LOW);
-	digitalWrite(IN2, LOW);
-	digitalWrite(IN3, HIGH);
-	digitalWrite(IN4, LOW);
+	// build truth table and fill in the digitalWrite
+
 	// Serial.println("turnRight");
 }
 
 void turnLeft() {
-	analogWrite(EN1_PIN, SPD);
-	analogWrite(EN2_PIN, SPD);
+	// what analogWrite could go here
 
-	digitalWrite(IN1, LOW);
-	digitalWrite(IN2, HIGH);
-	digitalWrite(IN3, LOW);
-	digitalWrite(IN4, LOW);
-
+	// build table and fill this in as well
 	// Serial.println("turnLeft");
 }
 
+// given because we want coasting
 void stop() {
 	analogWrite(EN1_PIN, 0);
 	analogWrite(EN2_PIN, 0);
@@ -96,48 +84,30 @@ void stop() {
 
 void setup() {
 
+	// add pinmode for the other line following sensor
 	pinMode(LFL_DIG_PIN, INPUT);
-	pinMode(LFR_DIG_PIN, INPUT);
 
+	// repeat for IN2 - IN4
 	pinMode(IN1, OUTPUT);
-	pinMode(IN2, OUTPUT);
-	pinMode(IN3, OUTPUT);
-	pinMode(IN4, OUTPUT);
 
 	Serial.begin(115200);
-
 	while (!Serial);
-
-	analogWrite(EN1_PIN, SPD);
-	analogWrite(EN2_PIN, SPD);
-
 	Serial.println("Ready");
 
 }
 
 void loop() {
-	/** Day 1:
-	 * connecting all the wires (not the MPU 6050), reading all the sensors, spinning the motors once or twice, going forward/backwards
-	 * left/right is 1 when over tape 0 when not
-	 * TAPE_FLOOR_THRESH is something that has to be tuned by the kids every single class, things like heat, color and material effects the
-	 * IR sensor in a light spectrum we cannot see, black tape and black table might look very different to IR sensor
-	 * but can then look the same when heated with your hand
 
-	 * the > or < sign also changes depending on if the floor is darker or lighter IR than the tape in class
-	 * > for black ink path on white printer paper
-	 */
+	// fill in reading the pins here
+	int leftAnalog = 2;
+	int rightAnalog = 1;
 
-	int leftAnalog = analogRead(LFL_NLG_PIN);
-	int rightAnalog = analogRead(LFR_NLG_PIN);
-
+	// calibrate TAPE_FLOOR_THRESH, use Serial plotter to better see what is going on
 	bool leftSeeTape = leftAnalog > TAPE_FLOOR_THRESH;
 	bool rightSeeTape = rightAnalog > TAPE_FLOOR_THRESH;
 
-	static unsigned long lastPrint = 0;
-
-	// print once a second, serial takes forever otherwise
 	// DEBUG STATEMENTS IF NEEDED
-
+	static unsigned long lastPrint = 0;
 	if (millis() - lastPrint > 100) {
 		lastPrint = millis();
 		// Serial.print("left: ");
@@ -156,58 +126,17 @@ void loop() {
 		Serial.println(leftSeeTape);
 	}
 
-	/** Day 2: Bang Bang Line following logic
-	 * a very basic program, to bounce on the inside/outside of tape (depending on how you setup the >< signs earlier)
-	 *
-	 * The first solution to inertia they will solve is to
-	 * let the last command to persist for some # of time
-	 * The robot has some static friction that stops us from moving slow
-	 * When we move to fast inertia generally carries us over the line
-	 * this is a hardware limitation we cannot currently fix
-	 * we compensate for this by persisting the last instruction for some amount of time
-	 * this way even when we don't see the line due to overshoot we can guess where it is
-	 */
-
 	static long lastRight = 0;
 	static long lastLeft = 0;
 	static long lastForward = 0;
 
 	if (!leftSeeTape && !rightSeeTape) {
 
-		forward();
-		/**UNIT3 : Persistance with a reset*/
-
-		// if the last instruction was to turn right (it passed over the left edge but overshot), let it persist for INTERVAL_OF_STOPED ms
-		if ( lastRight > lastForward && lastRight > lastLeft && millis() - lastRight < INTERVAL_OF_STOP) {
-			turnRight();
-
-		} else if (lastLeft > lastForward && lastLeft > lastRight && millis() - lastLeft < INTERVAL_OF_STOP) {
-			turnLeft();
-
-		// if the line just ends abruptly ... turn right to hopefully find the line again, also give it more time to figure this out
-		// go straight if the tape is smaller than
-		} else if (millis() - lastForward < INTERVAL_OF_STOP_ABRUPT) {
-			forward();
-
-		// we stuck and can't see anything for a while just give up, ... loop will restart it after 2s in tape/flipped over
-		} else {
-			stop();
-			// the delay allows some random amt of time before it goes off into the world
-			delay(2000);
-		}
-
-		/** UNIT 3: ^^*/
-
 	} else if (leftSeeTape && rightSeeTape) {
-		forward();
-		lastForward = millis();
 
 	} else if (!leftSeeTape && rightSeeTape) {
-		turnRight();
-		lastRight = millis();
 
 	} else if (leftSeeTape && !rightSeeTape) {
-		turnLeft();
-		lastLeft = millis();
+
 	}
 }
