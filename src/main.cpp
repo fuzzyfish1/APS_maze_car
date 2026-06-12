@@ -39,19 +39,6 @@
  * http://handsontec.com/dataspecs/L298N%20Motor%20Driver.pdf
  * https://www.st.com/resource/en/datasheet/l298.pdf
  *
- * https://www.invensense.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf
- * https://lastminuteengineers.com/mpu6050-accel-gyro-arduino-tutorial/
- * ^^ grab MPU6050 images from ^^, it explains MEMS devices very well
- *
- * MAZE SOLN would look similar, follow the left edge/tape barrier
- * build and populate a map datastructure and run through the whole thing, prebuild a map to run through
- * we could explore Dijkstra, A*, random Mouse, left/right hand rules, deadend filling, negative potential field, Machine learning algorithms
- * and have the kids decide and build their own algorithms with it
- *
- * adding encoders/an accelerometer would let me add PID control and odometry, which would make real maze solutions actually possible
- *
- * fill up the class a bit with trying different things in the classroom to see what would make a good map
- *
 */
 
 // PROGRAM CTRL SHI
@@ -105,10 +92,6 @@ void stop() {
 	digitalWrite(IN3, LOW);
 	digitalWrite(IN4, LOW);
 	// Serial.println("stop");
-}
-
-void stopMotors() {
-
 }
 
 void setup() {
