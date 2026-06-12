@@ -36,7 +36,7 @@
  *
 */
 
-#define TAPE_FLOOR_THRESH 0 // fill in this number
+#define TAPE_FLOOR_THRESH 0 // TODO: fill in this number
 #define SPD 100 // PWM 0 - 255
 #define INTERVAL_OF_STOP 2000 // amount of time to be not seeing tape before robot decides to stop
 #define INTERVAL_OF_STOP_ABRUPT 5000
@@ -57,15 +57,15 @@ void turnRight() {
 	analogWrite(EN1_PIN, SPD);
 	analogWrite(EN2_PIN, SPD);
 
-	// build truth table and fill in the digitalWrite
+	// TODO: build truth table and fill in the digitalWrite
 
 	// Serial.println("turnRight");
 }
 
 void turnLeft() {
-	// what analogWrite could go here
+	// TODO: what analogWrite could go here
 
-	// build table and fill this in as well
+	// TODO: build table and fill this in as well
 	// Serial.println("turnLeft");
 }
 
@@ -83,10 +83,10 @@ void stop() {
 
 void setup() {
 
-	// add pinmode for the other line following sensor
+	// TODO: add pinmode for the other line following sensor
 	pinMode(LFL_DIG_PIN, INPUT);
 
-	// repeat for IN2 - IN4
+	// TODO: repeat for IN2 - IN4
 	pinMode(IN1, OUTPUT);
 
 	Serial.begin(115200);
@@ -97,15 +97,16 @@ void setup() {
 
 void loop() {
 
-	// fill in reading the pins here
+	// TODO: fill in reading the pins here
 	int leftAnalog = 2;
 	int rightAnalog = 1;
 	// watch these in the Serial Plotter
 
-	// how do we know if we are on the tape/line
+	// TODO: how do we know if we are on the tape/line
 	bool leftSeeTape = true;
 	bool rightSeeTape = true;
 
+	// TODO: see if everything is valid from the serial plotter
 	static unsigned long lastPrint = 0;
 	if (millis() - lastPrint > 100) {
 		lastPrint = millis();
@@ -125,7 +126,7 @@ void loop() {
 		Serial.println(leftSeeTape);
 	}
 
-	/** to test out the motors, uncomment one of these lines, then comment them back in the final code */
+	/** TODO: to test out the motors, uncomment one of these lines, then comment them back in the final code */
 
 	// forward();
 	// delay(1000);
@@ -142,6 +143,7 @@ void loop() {
 
 	// think about all the combinations of leftSeeTape and rightSeeTape
 	// as you decide what inputs lead to what outputs
+	// TODO: the final decision making algorithm
 	if (!leftSeeTape && !rightSeeTape) {
 
 	} else if (leftSeeTape && rightSeeTape) {
