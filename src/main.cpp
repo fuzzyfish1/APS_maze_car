@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <Adafruit_MPU6050.h>
 
 // Line following sensor GND -> Arduino GND
 // Line Following Sensor Vin -> Arduino 5V
@@ -101,12 +100,12 @@ void loop() {
 	// fill in reading the pins here
 	int leftAnalog = 2;
 	int rightAnalog = 1;
+	// watch these in the Serial Plotter
 
-	// calibrate TAPE_FLOOR_THRESH, use Serial plotter to better see what is going on
-	bool leftSeeTape = leftAnalog > TAPE_FLOOR_THRESH;
-	bool rightSeeTape = rightAnalog > TAPE_FLOOR_THRESH;
+	// how do we know if we are on the tape/line
+	bool leftSeeTape = true;
+	bool rightSeeTape = true;
 
-	// DEBUG STATEMENTS IF NEEDED
 	static unsigned long lastPrint = 0;
 	if (millis() - lastPrint > 100) {
 		lastPrint = millis();
@@ -126,10 +125,23 @@ void loop() {
 		Serial.println(leftSeeTape);
 	}
 
+	/** to test out the motors, uncomment one of these lines, then comment them back in the final code */
+
+	// forward();
+	// delay(1000);
+
+	// turnRight();
+	// delay(1000);
+
+	// turnLeft();
+	// delay(1000);
+
 	static long lastRight = 0;
 	static long lastLeft = 0;
 	static long lastForward = 0;
 
+	// think about all the combinations of leftSeeTape and rightSeeTape
+	// as you decide what inputs lead to what outputs
 	if (!leftSeeTape && !rightSeeTape) {
 
 	} else if (leftSeeTape && rightSeeTape) {
